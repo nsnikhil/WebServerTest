@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Web Server Test</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- addItemDialog-->
+    <string name="dialogNameHint">Name</string>
+    <string name="dialogPhoneHint">Phone no</string>
+    <string name="dialogSubmit">Submit</string>
+    <!-- errors-->
+    <string name="dialogErrorEmptyName">Enter the name</string>
+    <string name="dialogErrorEmptyPhone">Enter the phone no</string>
+    <!-- -->
+
+
+</resources>

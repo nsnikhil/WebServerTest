@@ -1,0 +1,20 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/matchParent"
+    tools:context="com.nsnik.nrs.webservertest.views.fragments.HomeFragment">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/homeAdd"
+        style="@style/wrapContent"
+        android:layout_margin="@dimen/sixteen"
+        android:src="@drawable/ic_add_white_48px"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/homeContainer"
+        style="@style/matchParent" />
+
+</android.support.constraint.ConstraintLayout>
