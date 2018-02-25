@@ -7,14 +7,17 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.github.moduth.blockcanary.BlockCanary;
+import com.nsnik.nrs.webservertest.dagger.components.DaggerDatabaseComponent;
 import com.nsnik.nrs.webservertest.dagger.components.DaggerNetworkComponent;
+import com.nsnik.nrs.webservertest.dagger.components.DatabaseComponent;
 import com.nsnik.nrs.webservertest.dagger.components.NetworkComponent;
 import com.nsnik.nrs.webservertest.dagger.modules.ContextModule;
 import com.nsnik.nrs.webservertest.util.AppBlockCanaryContext;
+import com.nsnik.nrs.webservertest.util.DbUtil;
+import com.nsnik.nrs.webservertest.util.NetworkUtil;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
-import retrofit2.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -25,13 +28,14 @@ import timber.log.Timber;
 
 public class MyApplication extends Application {
 
-    private RefWatcher refWatcher;
-    private ContextModule mContextModule;
-    private Retrofit mRetrofitClient;
-
     static {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
     }
+
+    private RefWatcher refWatcher;
+    private ContextModule mContextModule;
+    private DbUtil mDbUtil;
+    private NetworkUtil mNetworkUtil;
 
     public static RefWatcher getRefWatcher(@NonNull Context context) {
         MyApplication application = (MyApplication) context.getApplicationContext();
@@ -63,6 +67,7 @@ public class MyApplication extends Application {
         if (LeakCanary.isInAnalyzerProcess(this)) {
             return;
         }
+        BlockCanary.install(this, new AppBlockCanaryContext()).start();
         moduleSetter();
     }
 
@@ -72,6 +77,7 @@ public class MyApplication extends Application {
     private void moduleSetter() {
         setContextModule();
         setNetworkModule();
+        setDatabaseComponent();
     }
 
     private void setContextModule() {
@@ -80,11 +86,19 @@ public class MyApplication extends Application {
 
     private void setNetworkModule() {
         NetworkComponent networkComponent = DaggerNetworkComponent.create();
-        mRetrofitClient = networkComponent.getRetrofit();
+        mNetworkUtil = networkComponent.getNetworkUtil();
     }
 
-    public Retrofit getRetrofitClient() {
-        return mRetrofitClient;
+    private void setDatabaseComponent() {
+        DatabaseComponent databaseComponent = DaggerDatabaseComponent.builder().contextModule(mContextModule).build();
+        mDbUtil = databaseComponent.getDbUtil();
     }
 
+    public DbUtil getDbUtil() {
+        return mDbUtil;
+    }
+
+    public NetworkUtil getNetworkUtil() {
+        return mNetworkUtil;
+    }
 }

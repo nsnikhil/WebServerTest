@@ -1,17 +1,13 @@
 package com.nsnik.nrs.webservertest.dagger.components;
 
 import com.nsnik.nrs.webservertest.dagger.modules.NetworkModule;
+import com.nsnik.nrs.webservertest.dagger.scopes.ApplicationScope;
+import com.nsnik.nrs.webservertest.util.NetworkUtil;
 
 import dagger.Component;
-import retrofit2.Retrofit;
 
-/**
- * @author nikhil
- * @version 1.0
- * @since 15-02-2018
- */
-
+@ApplicationScope
 @Component(modules = NetworkModule.class)
 public interface NetworkComponent {
-    Retrofit getRetrofit();
+    NetworkUtil getNetworkUtil();
 }

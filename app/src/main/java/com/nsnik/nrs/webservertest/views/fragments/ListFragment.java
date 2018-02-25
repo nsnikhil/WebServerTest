@@ -1,13 +1,10 @@
 package com.nsnik.nrs.webservertest.views.fragments;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nsnik.nrs.webservertest.R;
-import com.nsnik.nrs.webservertest.model.UserModel;
+import com.nsnik.nrs.webservertest.data.UserEntity;
 import com.nsnik.nrs.webservertest.viewModel.ListViewModel;
 import com.nsnik.nrs.webservertest.views.adapters.ListAdapter;
 
@@ -43,7 +40,7 @@ public class ListFragment extends Fragment {
 
     private Unbinder mUnbinder;
     private ListAdapter mListAdapter;
-    private List<UserModel> mDemoList;
+    private List<UserEntity> mDemoList;
     private ListViewModel mListViewModel;
 
     @Nullable
@@ -60,15 +57,14 @@ public class ListFragment extends Fragment {
      */
     private void initialize() {
 
-        final FragmentActivity fragmentActivity = getActivity();
         mSwipeRefresh.setRefreshing(true);
 
         mDemoList = new ArrayList<>();
 
-        mListAdapter = new ListAdapter(fragmentActivity, mDemoList);
-        mList.setLayoutManager(new LinearLayoutManager(fragmentActivity));
-        mList.addItemDecoration(new DividerItemDecoration(fragmentActivity, RecyclerView.VERTICAL));
-
+        mListAdapter = new ListAdapter(getActivity(), mDemoList);
+        mList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if (getActivity() != null)
+            mList.addItemDecoration(new DividerItemDecoration(getActivity(), RecyclerView.VERTICAL));
 
         mList.setAdapter(mListAdapter);
 
@@ -77,7 +73,7 @@ public class ListFragment extends Fragment {
         mListViewModel.getDemoList().observe(this, this::updateList);
     }
 
-    private void updateList(List<UserModel> newList){
+    private void updateList(List<UserEntity> newList) {
         mDemoList = newList;
         mListAdapter.modifyList(mDemoList);
         mSwipeRefresh.setRefreshing(false);

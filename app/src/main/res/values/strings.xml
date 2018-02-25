@@ -1,15 +1,20 @@
 <resources>
     <string name="app_name">Web Server Test</string>
     <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
 
     <!-- addItemDialog-->
     <string name="dialogNameHint">Name</string>
     <string name="dialogPhoneHint">Phone no</string>
     <string name="dialogSubmit">Submit</string>
-    <!-- errors-->
+
+    <!-- dialogErrors-->
     <string name="dialogErrorEmptyName">Enter the name</string>
     <string name="dialogErrorEmptyPhone">Enter the phone no</string>
     <!-- -->
 
+    <!-- networkError -->
+    <string name="networkErrorNoNetwork">No Internet!</string>
+    <!-- -->
 
 </resources>

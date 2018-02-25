@@ -7,18 +7,11 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.nsnik.nrs.webservertest.MyApplication;
-import com.nsnik.nrs.webservertest.model.UserModel;
-import com.nsnik.nrs.webservertest.util.DemoRetrofitService;
+import com.nsnik.nrs.webservertest.data.UserEntity;
+import com.nsnik.nrs.webservertest.util.DbUtil;
+import com.nsnik.nrs.webservertest.util.NetworkUtil;
 
 import java.util.List;
-
-import io.reactivex.CompletableObserver;
-import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import retrofit2.Retrofit;
-import timber.log.Timber;
 
 /**
  * @author nikhil
@@ -28,63 +21,59 @@ import timber.log.Timber;
 
 public class ListViewModel extends AndroidViewModel {
 
-    private final Retrofit mRetrofit;
-    private MutableLiveData<List<UserModel>> mDemoList;
+    private final NetworkUtil mNetworkUtil;
+    private final DbUtil mDbUtil;
+    private MutableLiveData<List<UserEntity>> mDemoList;
 
     public ListViewModel(@NonNull Application application) {
         super(application);
-        mRetrofit = ((MyApplication) application).getRetrofitClient();
-        mDemoList = new MutableLiveData<>();
-        getDemoListServer();
+        mNetworkUtil = ((MyApplication) application).getNetworkUtil();
+        mDbUtil = ((MyApplication) application).getDbUtil();
+        mNetworkUtil.getDemoListServer();
+        mDemoList = mNetworkUtil.getUserList();
     }
 
-    public LiveData<List<UserModel>> getDemoList() {
+    public MutableLiveData<List<UserEntity>> getDemoList() {
         return mDemoList;
     }
 
-    private void getDemoListServer() {
-        mRetrofit.create(DemoRetrofitService.class).getDemoList()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<List<UserModel>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(List<UserModel> userModels) {
-                        mDemoList.setValue(userModels);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.d(e.getMessage());
-                    }
-                });
+    public void insertValue(String name, String phoneNo) {
+        mNetworkUtil.insertValue(name, phoneNo);
     }
 
-    public void insertValue(final String name, final int phoneNo) {
-        mRetrofit.create(DemoRetrofitService.class)
-                .addItem(name, phoneNo)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+    public LiveData<UserEntity> getUserByPhoneNo(String phoneNo) {
+        return mDbUtil.getUserFromPhoneNo(phoneNo);
+    }
 
-                    }
+    public LiveData<UserEntity> getUserById(int id) {
+        return mDbUtil.getUserById(id);
+    }
 
-                    @Override
-                    public void onSuccess(String s) {
-                        Timber.d(s);
-                        getDemoListServer();
-                    }
+    public LiveData<List<UserEntity>> getUserByName(String name) {
+        return mDbUtil.getUsersByName(name);
+    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.d(e.getMessage());
-                    }
-                });
+    public void insertUser(UserEntity... userEntities) {
+        mDbUtil.insertUser(userEntities);
+    }
+
+    public void updateUser(UserEntity... userEntities) {
+        mDbUtil.updateUser(userEntities);
+    }
+
+    public void deleteUser(UserEntity... userEntities) {
+        mDbUtil.deleteUser(userEntities);
+    }
+
+    public void deleteUserByPhoneNo(String phoneNo) {
+        mDbUtil.deleteUserByPhoneNo(phoneNo);
+    }
+
+    public void deleteUserByName(String name) {
+        mDbUtil.deleteUserByName(name);
+    }
+
+    public void deleteUserById(int id) {
+        mDbUtil.deleteUserById(id);
     }
 }

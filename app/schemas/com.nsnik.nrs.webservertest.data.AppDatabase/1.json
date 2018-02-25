@@ -1,0 +1,45 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "e8ab305583d91dee282f1e0fbd9bd273",
+    "entities": [
+      {
+        "tableName": "UserEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mId` INTEGER NOT NULL, `mPhoneNo` TEXT, `mUserName` TEXT, PRIMARY KEY(`mId`))",
+        "fields": [
+          {
+            "fieldPath": "mId",
+            "columnName": "mId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mPhoneNo",
+            "columnName": "mPhoneNo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mUserName",
+            "columnName": "mUserName",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "mId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e8ab305583d91dee282f1e0fbd9bd273\")"
+    ]
+  }
+}

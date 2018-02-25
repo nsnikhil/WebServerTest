@@ -6,14 +6,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.jakewharton.rxbinding2.view.RxView;
 import com.nsnik.nrs.webservertest.R;
-import com.nsnik.nrs.webservertest.model.UserModel;
+import com.nsnik.nrs.webservertest.data.UserEntity;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.CompositeDisposable;
+import timber.log.Timber;
 
 /**
  * @author nikhil
@@ -23,25 +27,27 @@ import butterknife.ButterKnife;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
 
-    private List<UserModel> mUserList;
     private final Context mContext;
+    private final CompositeDisposable mCompositeDisposable;
+    private List<UserEntity> mUserList;
 
-    public ListAdapter(final Context context, final List<UserModel> userList) {
+    public ListAdapter(final Context context, final List<UserEntity> userList) {
         mContext = context;
         mUserList = userList;
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
     public ListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new MyViewHolder(LayoutInflater.from(mContext).inflate(R.layout.single_list_item,parent,false));
+        return new MyViewHolder(LayoutInflater.from(mContext).inflate(R.layout.single_list_item, parent, false));
     }
 
     @Override
     public void onBindViewHolder(ListAdapter.MyViewHolder holder, int position) {
-        final UserModel userModel = mUserList.get(position);
-        holder.mItemId.setText(String.valueOf(userModel.id()));
-        holder.mItemName.setText(userModel.name());
-        holder.mItemPhone.setText(String.valueOf(userModel.phone()));
+        final UserEntity userEntity = mUserList.get(position);
+        holder.mItemId.setText(String.valueOf(userEntity.getId()));
+        holder.mItemName.setText(userEntity.getUserName());
+        holder.mItemPhone.setText(String.valueOf(userEntity.getPhoneNo()));
     }
 
     @Override
@@ -49,9 +55,20 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
         return mUserList != null ? mUserList.size() : 0;
     }
 
-    public void modifyList(List<UserModel> userModelList) {
+    public void modifyList(List<UserEntity> userModelList) {
         mUserList = userModelList;
         notifyDataSetChanged();
+    }
+
+    private void cleanUp() {
+        mCompositeDisposable.clear();
+        mCompositeDisposable.dispose();
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        cleanUp();
+        super.onDetachedFromRecyclerView(recyclerView);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -66,6 +83,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
         MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                mCompositeDisposable.add(RxView.clicks(itemView).subscribe(v -> Toast.makeText(mContext, mUserList.get(getAdapterPosition()).getUserName(), Toast.LENGTH_SHORT).show(), throwable -> Timber.d(throwable.getMessage())));
+            }
         }
     }
 }

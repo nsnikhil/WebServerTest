@@ -1,10 +1,9 @@
 package com.nsnik.nrs.webservertest.util;
 
-import com.nsnik.nrs.webservertest.model.UserModel;
+import com.nsnik.nrs.webservertest.data.UserEntity;
 
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.Single;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -19,10 +18,10 @@ import retrofit2.http.POST;
 
 public interface DemoRetrofitService {
 
-    @GET("/phpScripts/readAll.php")
-    Single<List<UserModel>> getDemoList();
+    @GET("/php/readAll.php")
+    Single<List<UserEntity>> getDemoList();
 
     @FormUrlEncoded
-    @POST("/phpScripts/insert.php")
-    Single<String> addItem(@Field("fname") String name, @Field("phone") int phone);
+    @POST("/php/insert.php")
+    Single<String> addItem(@Field("name") String name, @Field("phone") String phone);
 }
